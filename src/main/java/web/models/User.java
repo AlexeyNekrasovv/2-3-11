@@ -1,6 +1,11 @@
 package web.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -10,8 +15,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 20, message = "Name should be between 2 and 20")
+    //@NotBlank(message = "Name is mandatory")
+    @Pattern(regexp = "^[A-Za-zА-Яа-яЁё\\s]+$", message = "Name must contain only letters and spaces")
     private String name;
 
+    @NotEmpty(message = "Email should not be empty")
+    @Email(message = "not valid")
     private String email;
 
     public User() {
@@ -45,6 +56,19 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email);
     }
 
     @Override

@@ -3,9 +3,12 @@ package web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.models.User;
 import web.service.UserService;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -38,7 +41,11 @@ public class UsersController {
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("user") User user) {
+    public String create(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return "new";
+
         userService.save(user);
         return "redirect:/users";
     }
@@ -56,7 +63,11 @@ public class UsersController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute("user") User user, @RequestParam("id") Long id) {
+    public String update(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult, @RequestParam("id") Long id) {
+        if (bindingResult.hasErrors())
+            return "update";
+        
         userService.update(id, user);
         return "redirect:/users";
     }
